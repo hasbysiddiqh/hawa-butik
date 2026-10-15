@@ -148,39 +148,10 @@
                 <div class="col-lg-7 col-md-12 contact-right no-padding">
                     <h1>Hubungi Hawa Butik</h1>
                     <p>
-                        Ingin menyewa busana untuk acara spesial? Kirimkan pesan kepada kami untuk informasi koleksi, ketersediaan, dan proses pemesanan.
+                        Ingin menjahit busana custom untuk acara spesial? Pilih model, ukuran, dan bahan yang Anda inginkan, lalu kirim pesanan Anda kepada kami.
                     </p>
 
-                    <form class="booking-form" id="myForm" action="{{ route('pesanan.store') }}" method="POST">
-                        @csrf
-                        <div class="row">
-                            <div class="col-lg-12 d-flex flex-column">
-                                <input name="nama" type="text" placeholder="Nama Anda"
-                                       class="form-control mt-20" value="{{ old('nama') }}" required>
-                            </div>
-                            <div class="col-lg-12 d-flex flex-column">
-                                <input name="whatsapp" type="text" placeholder="Nomor WhatsApp"
-                                       class="common-input mt-10" value="{{ old('whatsapp') }}" required>
-                            </div>
-                            <div class="col-lg-12 flex-column">
-                                <textarea name="detail_pesanan" class="form-control mt-20"
-                                          placeholder="Pesan/Detail Pesanan" required>{{ old('detail_pesanan') }}</textarea>
-                            </div>
-
-                            <div class="col-lg-12 d-flex justify-content-end send-btn">
-                                <button type="submit" class="submit-btn primary-btn mt-20 text-uppercase">KONFIRMASI PEMESANAN<span class="lnr lnr-arrow-right"></span></button>
-                            </div>
-
-                            <div class="col-lg-12">
-                                @if (session('success'))
-                                    <div class="alert alert-success mt-20">{{ session('success') }}</div>
-                                @endif
-                                @if ($errors->any())
-                                    <div class="alert alert-danger mt-20">{{ $errors->first() }}</div>
-                                @endif
-                            </div>
-                        </div>
-                    </form>
+                    <a href="{{ route('pesanan.create') }}" class="submit-btn primary-btn mt-20 text-uppercase">BUAT PESANAN<span class="lnr lnr-arrow-right"></span></a>
                 </div>
             </div>
         </div>
@@ -214,17 +185,5 @@
     <script src="{{ asset('js/simple-lightbox.min.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
 
-    <script>
-        // main.js punya handler AJAX lama (ke mail.php) yang memblokir submit form.
-        // Handler itu dilepas supaya form dikirim normal ke Laravel.
-        $(window).on('load', function () {
-            $('#myForm').off('submit');
-        });
-
-        // Setelah submit, kembali ke bagian kontak agar pesan sukses/error terlihat
-        @if (session('success') || $errors->any())
-            window.location.hash = 'contact';
-        @endif
-    </script>
 </body>
 </html>
