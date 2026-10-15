@@ -8,6 +8,9 @@
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
 
             <div class="text-center">
                 <h1>Detail Pesanan #{{ $pesanan->id }}</h1>
@@ -29,9 +32,23 @@
                 </dl>
             </div>
 
-            <div class="text-center mt-30">
-                <a href="{{ route('pesanan.index') }}" class="submit-btn primary-btn text-uppercase">DAFTAR PESANAN<span class="lnr lnr-arrow-right"></span></a>
-                <a href="{{ route('pesanan.create') }}" class="submit-btn primary-btn text-uppercase ml-2">PESAN LAGI<span class="lnr lnr-arrow-right"></span></a>
+            @if ($pesanan->bisaDiubah())
+                <div class="d-flex justify-content-center flex-wrap mt-30">
+                    <a href="{{ route('pesanan.edit', $pesanan) }}" class="submit-btn primary-btn text-uppercase m-1">UBAH PESANAN<span class="lnr lnr-arrow-right"></span></a>
+                    <form action="{{ route('pesanan.destroy', $pesanan) }}" method="POST" class="m-1"
+                          onsubmit="return confirm('Hapus pesanan ini? Tindakan ini tidak dapat dibatalkan.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="submit-btn primary-btn text-uppercase">BATALKAN PESANAN<span class="lnr lnr-arrow-right"></span></button>
+                    </form>
+                </div>
+            @else
+                <p class="text-center text-muted mt-30 mb-0">Pesanan sudah diproses, sehingga tidak dapat diubah atau dihapus.</p>
+            @endif
+
+            <div class="d-flex justify-content-center flex-wrap mt-30">
+                <a href="{{ route('pesanan.index') }}" class="submit-btn primary-btn text-uppercase m-1">DAFTAR PESANAN<span class="lnr lnr-arrow-right"></span></a>
+                <a href="{{ route('pesanan.create') }}" class="submit-btn primary-btn text-uppercase m-1">PESAN LAGI<span class="lnr lnr-arrow-right"></span></a>
             </div>
         </div>
     </div>

@@ -3,6 +3,10 @@
 @section('judul', 'Daftar Pesanan')
 
 @section('isi')
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
     <div class="d-flex justify-content-between align-items-end flex-wrap mb-20">
         <div>
             <h1>Daftar Pesanan</h1>

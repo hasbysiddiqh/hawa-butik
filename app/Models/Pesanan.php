@@ -35,4 +35,10 @@ class Pesanan extends Model
     ];
 
     public const STATUS = ['baru', 'diproses', 'selesai', 'dibatalkan'];
+
+    /** Pesanan hanya boleh diubah atau dihapus selama statusnya masih "baru". */
+    public function bisaDiubah(): bool
+    {
+        return $this->status === 'baru';
+    }
 }
