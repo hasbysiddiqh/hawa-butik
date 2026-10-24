@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Admin;
+use App\Models\Pelanggan;
 use App\Models\User;
 
 return [
@@ -16,7 +18,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
+        'guard' => env('AUTH_GUARD', 'pelanggan'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
     ],
 
@@ -42,6 +44,17 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Pelanggan dan admin memakai tabel terpisah (sesuai ERD), jadi guard-nya juga terpisah.
+        'pelanggan' => [
+            'driver' => 'session',
+            'provider' => 'pelanggans',
+        ],
+
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
     ],
 
     /*
@@ -65,6 +78,16 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
+        ],
+
+        'pelanggans' => [
+            'driver' => 'eloquent',
+            'model' => Pelanggan::class,
+        ],
+
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => Admin::class,
         ],
 
         // 'users' => [

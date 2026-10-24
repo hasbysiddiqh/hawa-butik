@@ -47,7 +47,7 @@ $(document).ready(function(){
   });
 
 
-  $('.nav-item a:first').tab('show');
+  $('.nav-item a[data-toggle="tab"]:first').tab('show');
 
 
      if(document.getElementById("gallery")){

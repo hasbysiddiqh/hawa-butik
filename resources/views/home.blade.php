@@ -24,6 +24,12 @@
     <link rel="stylesheet" href="{{ asset('css/simplelightbox.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
+    <style>
+        .contact-akun li { margin-bottom: 18px; }
+        .contact-akun a { display: inline-flex; align-items: center; color: #222; line-height: 1.4; }
+        .contact-akun a:hover { color: #7a77ff; text-decoration: none; }
+        .contact-akun .fa, .contact-akun svg { width: 36px; height: 36px; margin-right: 16px; font-size: 32px; fill: currentColor; text-align: center; }
+    </style>
 </head>
 <body>
 
@@ -33,14 +39,11 @@
             <div class="header-wrap">
                 <div class="header-top d-flex justify-content-between align-items-center">
                     <div class="logo">
-                        <a href="#home"><img src="{{ asset('img/logo.png') }}" alt="Hawa Butik"></a>
+                        <a href="{{ route('home') }}"><img src="{{ asset('img/logo.png') }}" alt="Hawa Butik"></a>
                     </div>
                     <div class="main-menubar d-flex align-items-center">
                         <nav class="hide">
-                            <a href="#home">Home</a>
-                            <a href="#about">About Me</a>
-                            <a href="#gallery">Collection</a>
-                            <a href="#contact">Contact</a>
+                            @include('partials.menu-utama')
                         </nav>
                         <div class="menu-bar"><span class="lnr lnr-menu"></span></div>
                     </div>
@@ -49,6 +52,14 @@
         </div>
     </header>
     <!-- End Header Area -->
+
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible text-center mb-0" role="alert"
+             style="position: fixed; top: 72px; left: 0; right: 0; z-index: 1050; border-radius: 0;">
+            {{ session('success') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Tutup"><span aria-hidden="true">&times;</span></button>
+        </div>
+    @endif
 
     <!-- Start Banner Area -->
     <section class="banner-area relative" id="home">
@@ -111,7 +122,7 @@
                     <p>
                         Hawa Butik hadir untuk menyediakan pilihan busana elegan yang dapat disewa untuk berbagai momen spesial. Dari acara formal hingga pesta dan perayaan, kami membantu Anda tampil anggun, percaya diri, dan memukau dengan busana yang tepat.
                     </p>
-                    <a href="#contact" class="submit-btn primary-btn mt-20 text-uppercase">RENT NOW<span class="lnr lnr-arrow-right"></span></a>
+                    <a href="{{ route('pelanggan.pemesanan') }}" class="submit-btn primary-btn mt-20 text-uppercase">RENT NOW<span class="lnr lnr-arrow-right"></span></a>
                 </div>
             </div>
         </div>
@@ -128,6 +139,9 @@
                         Jelajahi koleksi busana elegan Hawa Butik untuk melengkapi berbagai momen spesial Anda
                     </p>
                 </div>
+            </div>
+            <div class="text-center mb-30">
+                <a href="{{ route('katalog.index') }}" class="submit-btn primary-btn text-uppercase">LIHAT SEMUA COLLECTION<span class="lnr lnr-arrow-right"></span></a>
             </div>
             <div class="gal">
                 @for ($i = 1; $i <= 16; $i++)
@@ -148,10 +162,23 @@
                 <div class="col-lg-7 col-md-12 contact-right no-padding">
                     <h1>Hubungi Hawa Butik</h1>
                     <p>
-                        Ingin menjahit busana custom untuk acara spesial? Pilih model, ukuran, dan bahan yang Anda inginkan, lalu kirim pesanan Anda kepada kami.
+                        Ikuti dan hubungi kami lewat akun resmi Hawa Butik untuk melihat koleksi terbaru, bertanya soal busana, atau berkonsultasi sebelum memesan.
                     </p>
 
-                    <a href="{{ route('pesanan.create') }}" class="submit-btn primary-btn mt-20 text-uppercase">BUAT PESANAN<span class="lnr lnr-arrow-right"></span></a>
+                    <ul class="list-unstyled contact-akun">
+                        <li>
+                            <a href="https://www.instagram.com/hawa_butikk/" target="_blank" rel="noopener">
+                                <i class="fa fa-instagram"></i>
+                                <span><b>Instagram</b><br>@hawa_butikk</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.tiktok.com/@hawa_butikk" target="_blank" rel="noopener">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                                <span><b>TikTok</b><br>@hawa_butikk</span>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>

@@ -12,7 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Pelanggan dan admin masuk lewat halaman login yang sama.
+        $middleware->redirectGuestsTo(fn (Request $request) => route('login'));
+
+        // Yang sudah login dikembalikan ke Home (tampilan sama seperti sebelum login).
+        $middleware->redirectUsersTo(fn (Request $request) => route('home'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -38,6 +38,16 @@ return [
             'report' => false,
         ],
 
+        // Foto produk disimpan langsung di public/uploads/produk, jadi tidak perlu `storage:link`
+        // (di Windows perintah itu sering gagal tanpa hak administrator).
+        'produk' => [
+            'driver' => 'local',
+            'root' => public_path('uploads/produk'),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

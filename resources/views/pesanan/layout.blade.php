@@ -34,6 +34,7 @@
         .badge-status.selesai { background: #e8f7ee; color: #17703a; }
         .badge-status.dibatalkan { background: #fdecec; color: #b42323; }
     </style>
+    @stack('styles')
 </head>
 <body>
 
@@ -51,6 +52,7 @@
                             <a href="{{ url('/#about') }}">About Me</a>
                             <a href="{{ url('/#gallery') }}">Collection</a>
                             <a href="{{ url('/#contact') }}">Contact</a>
+                            @include('partials.auth-nav')
                         </nav>
                         <div class="menu-bar"><span class="lnr lnr-menu"></span></div>
                     </div>
