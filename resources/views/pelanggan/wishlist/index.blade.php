@@ -14,7 +14,7 @@
         @empty
             <div class="col-12 text-center py-5">
                 <p class="text-muted">Wishlist Anda masih kosong.</p>
-                <a href="{{ route('katalog.index') }}" class="submit-btn primary-btn text-uppercase">LIHAT KATALOG<span class="lnr lnr-arrow-right"></span></a>
+                <a href="{{ route('katalog.index') }}" class="submit-btn primary-btn text-uppercase">LIHAT KATALOG<i class="arr"></i></a>
             </div>
         @endforelse
     </div>

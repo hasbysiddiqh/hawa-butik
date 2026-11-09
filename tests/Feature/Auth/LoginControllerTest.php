@@ -32,7 +32,7 @@ class LoginControllerTest extends TestCase
         $this->assertGuest('admin');
     }
 
-    public function test_admin_with_valid_credentials_signs_in_and_redirects_to_home(): void
+    public function test_admin_with_valid_credentials_signs_in_and_redirects_to_ringkasan(): void
     {
         $admin = Admin::factory()->create(['email' => 'admin@example.com']);
 
@@ -40,7 +40,7 @@ class LoginControllerTest extends TestCase
             'peran' => 'admin',
             'email' => 'admin@example.com',
             'password' => 'password',
-        ])->assertRedirect(route('home'));
+        ])->assertRedirect(route('admin.dashboard'));
 
         $this->assertAuthenticatedAs($admin, 'admin');
         $this->assertGuest('pelanggan');
@@ -172,11 +172,11 @@ class LoginControllerTest extends TestCase
             ->assertRedirect(route('home'));
     }
 
-    public function test_signed_in_admin_visiting_login_is_redirected_to_home(): void
+    public function test_signed_in_admin_visiting_login_is_redirected_to_ringkasan(): void
     {
         $this->actingAs(Admin::factory()->create(), 'admin')
             ->get(route('login'))
-            ->assertRedirect(route('home'));
+            ->assertRedirect(route('admin.dashboard'));
     }
 
     public function test_logout_signs_out_and_redirects_home(): void
@@ -203,10 +203,17 @@ class LoginControllerTest extends TestCase
             ->assertDontSee(route('login'), false);
     }
 
-    public function test_admin_menu_has_profil_but_no_pemesanan_or_keluar(): void
+    public function test_admin_visiting_home_is_redirected_to_ringkasan(): void
     {
         $this->actingAs(Admin::factory()->create(), 'admin')
             ->get(route('home'))
+            ->assertRedirect(route('admin.dashboard'));
+    }
+
+    public function test_admin_menu_has_profil_but_no_pemesanan_or_keluar(): void
+    {
+        $this->actingAs(Admin::factory()->create(), 'admin')
+            ->get(route('admin.dashboard'))
             ->assertSee(route('admin.profil'), false)
             ->assertDontSee(route('pelanggan.pemesanan'), false)
             ->assertDontSee('Keluar');

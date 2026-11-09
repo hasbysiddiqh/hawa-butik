@@ -77,7 +77,16 @@ class RentalControllerTest extends TestCase
             'tipe' => 'rental',
             'id_produk' => $produk->id_produk,
             'jenis_pakaian' => $produk->kategori->nama_kategori,
-            'status' => 'baru',
+            'status' => 'dipinjam',
+        ]);
+
+        $pesanan = Pesanan::where('id_pelanggan', $saya->id_pelanggan)->firstOrFail();
+
+        $this->assertDatabaseHas('penyewaans', ['id_pesanan' => $pesanan->id, 'status_sewa' => 'dipinjam']);
+        $this->assertDatabaseHas('pembayarans', [
+            'id_pesanan' => $pesanan->id,
+            'status_bayar' => 'menunggu',
+            'jumlah_bayar' => 0,
         ]);
     }
 
@@ -126,16 +135,10 @@ class RentalControllerTest extends TestCase
             ->assertSessionHasErrors('id_produk');
     }
 
-    public function test_rental_pesanan_cannot_be_edited_but_can_be_cancelled(): void
+    public function test_rental_pesanan_cannot_be_edited_or_cancelled_by_pelanggan(): void
     {
         $saya = Pelanggan::factory()->create();
-        $produk = Produk::factory()->create();
-        $pesanan = Pesanan::factory()->for($saya, 'pelanggan')->create([
-            'tipe' => 'rental',
-            'id_produk' => $produk->id_produk,
-            'tanggal_sewa' => now()->addDay(),
-            'tanggal_kembali' => now()->addDays(2),
-        ]);
+        $pesanan = Pesanan::factory()->for($saya, 'pelanggan')->rental()->create();
 
         $this->actingAs($saya, 'pelanggan')
             ->get(route('pelanggan.pesanan.edit', $pesanan->id))
@@ -143,8 +146,47 @@ class RentalControllerTest extends TestCase
 
         $this->actingAs($saya, 'pelanggan')
             ->patch(route('pelanggan.pesanan.batal', $pesanan->id))
-            ->assertRedirect(route('pelanggan.pesanan.show', $pesanan->id));
+            ->assertRedirect(route('pelanggan.pesanan.show', $pesanan->id))
+            ->assertSessionHas('error');
 
-        $this->assertSame('dibatalkan', $pesanan->fresh()->status);
+        $this->assertSame('dipinjam', $pesanan->fresh()->status);
+    }
+
+    public function test_creating_a_rental_reduces_the_stock_automatically(): void
+    {
+        $produk = Produk::factory()->create(['stok' => 5]);
+
+        $this->actingAs(Pelanggan::factory()->create(), 'pelanggan')
+            ->post(route('pelanggan.rental.store'), $this->dataValid($produk, ['jumlah' => 2]))
+            ->assertRedirect();
+
+        $this->assertSame(3, $produk->fresh()->stok);
+        $this->assertTrue(Pesanan::firstOrFail()->stok_dipotong);
+    }
+
+    public function test_second_rental_cannot_take_stock_that_is_already_rented(): void
+    {
+        $produk = Produk::factory()->create(['stok' => 2]);
+        $this->actingAs(Pelanggan::factory()->create(), 'pelanggan');
+
+        $this->post(route('pelanggan.rental.store'), $this->dataValid($produk, ['jumlah' => 2]))->assertRedirect();
+        $this->assertSame(0, $produk->fresh()->stok);
+
+        $this->post(route('pelanggan.rental.store'), $this->dataValid($produk, ['jumlah' => 1]))
+            ->assertSessionHasErrors('jumlah');
+
+        $this->assertDatabaseCount('pesanans', 1);
+        $this->assertSame(0, $produk->fresh()->stok);
+    }
+
+    public function test_rejected_rental_leaves_the_stock_untouched(): void
+    {
+        $produk = Produk::factory()->create(['stok' => 1]);
+
+        $this->actingAs(Pelanggan::factory()->create(), 'pelanggan')
+            ->post(route('pelanggan.rental.store'), $this->dataValid($produk, ['jumlah' => 2]))
+            ->assertSessionHasErrors('jumlah');
+
+        $this->assertSame(1, $produk->fresh()->stok);
     }
 }

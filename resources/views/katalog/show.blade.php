@@ -3,38 +3,37 @@
 @section('judul', $produk->nama_produk)
 
 @section('isi')
-    <a href="{{ route('katalog.index') }}" class="btn-back"><span class="lnr lnr-arrow-left"></span>KEMBALI KE COLLECTION</a>
+    <a href="{{ route('katalog.index') }}" class="btn-back"><i class="arr arr-left"></i>Kembali ke Collection</a>
 
-    <div class="row">
-        <div class="col-md-5 mb-30">
-            <div class="produk-card">
-                <div class="produk-foto">
-                    @if ($produk->fotoUrl())
-                        <img src="{{ $produk->fotoUrl() }}" alt="{{ $produk->nama_produk }}">
-                    @else
-                        <span class="kosong"><i class="fa fa-picture-o"></i></span>
-                    @endif
-                </div>
-            </div>
+    <div class="kat-show">
+        <div class="kat-show-foto reveal">
+            @if ($produk->fotoUrl())
+                <img src="{{ $produk->fotoUrl() }}" alt="{{ $produk->nama_produk }}">
+            @else
+                <span class="kat-kosong lnr lnr-picture"></span>
+            @endif
         </div>
-        <div class="col-md-7">
-            <small class="text-muted text-uppercase">{{ $produk->kategori->nama_kategori }}</small>
+
+        <div class="kat-show-info reveal" style="--d:.1s">
+            <a class="kat-pil" href="{{ route('katalog.index', ['kategori' => $produk->kategori->id_kategori]) }}">{{ $produk->kategori->nama_kategori }}</a>
             <h1>{{ $produk->nama_produk }}</h1>
-            <div class="produk-harga mb-3" style="font-size: 22px">{{ $produk->hargaRupiah() }}</div>
+            <div class="kat-show-harga">{{ $produk->hargaRupiah() }}</div>
 
-            <p>{!! nl2br(e($produk->deskripsi ?: 'Belum ada deskripsi.')) !!}</p>
+            <p class="kat-show-desk">{!! nl2br(e($produk->deskripsi ?: 'Belum ada deskripsi.')) !!}</p>
 
-            <p>
+            <p class="kat-show-stok">
                 @if ($produk->stokHabis())
                     <span class="badge-stok">Stok habis</span>
                 @else
-                    <span class="text-muted">Stok tersedia: {{ $produk->stok }}</span>
+                    <span class="kat-tersedia"></span>Stok tersedia: {{ $produk->stok }}
                 @endif
             </p>
 
-            @unless ($produk->stokHabis())
-                <a href="{{ route('pelanggan.rental.create', ['produk' => $produk->id_produk]) }}" class="submit-btn primary-btn text-uppercase">SEWA SEKARANG<span class="lnr lnr-arrow-right"></span></a>
-            @endunless
+            <div class="kat-show-aksi">
+                @unless ($produk->stokHabis())
+                    <a href="{{ route('pelanggan.rental.create', ['produk' => $produk->id_produk]) }}" class="primary-btn">Sewa Sekarang<i class="arr"></i></a>
+                @endunless
+            </div>
         </div>
     </div>
 @endsection

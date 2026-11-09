@@ -8,7 +8,7 @@
             <h1>Produk</h1>
             <p class="lead-text mb-0">{{ $produks->total() }} produk tercatat.</p>
         </div>
-        <a href="{{ route('admin.produk.create') }}" class="submit-btn primary-btn text-uppercase">TAMBAH PRODUK<span class="lnr lnr-arrow-right"></span></a>
+        <a href="{{ route('admin.produk.create') }}" class="submit-btn primary-btn text-uppercase">TAMBAH PRODUK<i class="arr"></i></a>
     </div>
 
     <form class="form-inline mb-20" method="GET" action="{{ route('admin.produk.index') }}">

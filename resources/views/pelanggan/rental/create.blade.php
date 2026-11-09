@@ -5,7 +5,7 @@
 @section('isi')
     <div class="row justify-content-center">
         <div class="col-lg-7 col-md-10">
-            <a href="{{ route('pelanggan.pemesanan') }}" class="btn-back"><span class="lnr lnr-arrow-left"></span>KEMBALI</a>
+            <a href="{{ route('pelanggan.pemesanan') }}" class="btn-back"><i class="arr arr-left"></i>KEMBALI</a>
 
             <div class="text-center">
                 <h1>Rental</h1>
@@ -17,7 +17,8 @@
             <form class="pesanan-form pesanan-card" action="{{ route('pelanggan.rental.store') }}" method="POST">
                 @csrf
 
-                <label for="id_produk">Busana</label>
+                <h4 class="form-bagian"><span class="lnr lnr-tag"></span>Pilih busana</h4>
+                <label for="id_produk">Busana dari Collection</label>
                 <select id="id_produk" name="id_produk" class="form-control" required>
                     <option value="">-- Pilih busana --</option>
                     @foreach ($produks->groupBy(fn ($p) => $p->kategori->nama_kategori) as $namaKategori => $daftar)
@@ -31,6 +32,7 @@
                     @endforeach
                 </select>
 
+                <h4 class="form-bagian"><span class="lnr lnr-user"></span>Data pemesan</h4>
                 <div class="row">
                     <div class="col-md-6">
                         <label for="nama">Nama</label>
@@ -48,6 +50,7 @@
                 <textarea id="alamat_pengiriman" name="alamat_pengiriman" class="form-control" maxlength="500"
                           style="height: 90px" placeholder="Kosongkan jika diambil langsung di butik">{{ old('alamat_pengiriman', $alamat) }}</textarea>
 
+                <h4 class="form-bagian"><span class="lnr lnr-calendar-full"></span>Detail sewa</h4>
                 <div class="row">
                     <div class="col-md-6">
                         <label for="ukuran">Ukuran (opsional)</label>
@@ -82,8 +85,9 @@
                 <textarea id="detail_pesanan" name="detail_pesanan" class="form-control" maxlength="2000"
                           placeholder="Contoh: acara wisuda, butuh dipakai jam 7 pagi">{{ old('detail_pesanan') }}</textarea>
 
-                <div class="text-center mt-30">
-                    <button type="submit" class="submit-btn primary-btn text-uppercase">KONFIRMASI RENTAL<span class="lnr lnr-arrow-right"></span></button>
+                <div class="form-aksi">
+                    <a href="{{ route('pelanggan.pemesanan') }}" class="form-batal">Batal</a>
+                    <button type="submit" class="submit-btn primary-btn text-uppercase">KONFIRMASI RENTAL<i class="arr"></i></button>
                 </div>
             </form>
         </div>

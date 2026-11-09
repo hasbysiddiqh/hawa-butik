@@ -142,12 +142,12 @@ class ProfilControllerTest extends TestCase
         $this->assertTrue(Hash::check('password', $saya->fresh()->password));
     }
 
-    public function test_profil_page_has_the_logout_button(): void
+    public function test_profil_page_keeps_logout_in_the_sidebar_only(): void
     {
         $this->actingAs(Pelanggan::factory()->create(), 'pelanggan')
             ->get(route('pelanggan.profil.edit'))
             ->assertOk()
             ->assertSee(route('logout'), false)
-            ->assertSee('KELUAR');
+            ->assertDontSee('KELUAR');
     }
 }

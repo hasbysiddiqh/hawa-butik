@@ -9,6 +9,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RentalController extends Controller
@@ -61,32 +62,36 @@ class RentalController extends Controller
             'tanggal_kembali' => 'Tanggal kembali',
         ]);
 
-        $produk = Produk::with('kategori')->findOrFail($data['id_produk']);
+        // Cek stok, kurangi stok, lalu simpan pesanan, penyewaan, detail transaksi, dan pembayaran
+        // dalam satu transaksi database. Baris produk dikunci agar dua pelanggan tidak menyewa stok yang sama.
+        $pesanan = DB::transaction(function () use ($request, $data) {
+            $produk = Produk::with('kategori')->lockForUpdate()->findOrFail($data['id_produk']);
 
-        if ($produk->stok < $data['jumlah']) {
-            return back()
-                ->withInput()
-                ->withErrors(['jumlah' => "Stok {$produk->nama_produk} tersisa {$produk->stok}."]);
-        }
+            if ($produk->stok < $data['jumlah']) {
+                throw ValidationException::withMessages([
+                    'jumlah' => "Stok {$produk->nama_produk} tersisa {$produk->stok}.",
+                ]);
+            }
 
-        // Harga pada katalog merupakan harga sewa per potong; total dihitung dari harga x jumlah.
-        // Simpan pesanan, detail transaksi, dan catatan pembayaran secara atomik agar datanya konsisten.
-        $hargaSatuan = (int) $produk->harga_sewa;
-        $subtotal = $hargaSatuan * (int) $data['jumlah'];
+            $produk->decrement('stok', (int) $data['jumlah']);
 
-        $pesanan = DB::transaction(function () use ($request, $data, $produk, $hargaSatuan, $subtotal) {
+            // Harga pada katalog merupakan harga sewa per potong; total dihitung dari harga x jumlah.
+            $hargaSatuan = (int) $produk->harga_sewa;
+            $subtotal = $hargaSatuan * (int) $data['jumlah'];
+
             $pesanan = $request->user('pelanggan')->pesanans()->create([
                 ...$data,
                 'tipe'          => 'rental',
                 'jenis_pakaian' => $produk->kategori->nama_kategori,
-                'status'        => 'baru',
+                'status'        => 'dipinjam',
                 'total'         => $subtotal,
+                'stok_dipotong' => true,
             ]);
 
             $pesanan->penyewaan()->create([
                 'tgl_mulai' => $data['tanggal_sewa'],
                 'tgl_kembali' => $data['tanggal_kembali'],
-                'status_sewa' => 'dipesan',
+                'status_sewa' => 'dipinjam',
                 'denda' => 0,
             ]);
 
@@ -98,7 +103,7 @@ class RentalController extends Controller
             ]);
 
             $pesanan->pembayaran()->create([
-                'jumlah_bayar' => $subtotal,
+                'jumlah_bayar' => 0,
                 'status_bayar' => 'menunggu',
             ]);
 

@@ -17,6 +17,7 @@
         @method($metode)
     @endif
 
+    <h4 class="form-bagian"><span class="lnr lnr-user"></span>Data pemesan</h4>
     <div class="row">
         <div class="col-md-6">
             <label for="nama">Nama</label>
@@ -34,6 +35,7 @@
     <textarea id="alamat_pengiriman" name="alamat_pengiriman" class="form-control" maxlength="500"
               style="height: 90px" placeholder="Kosongkan jika diambil langsung di butik">{{ old('alamat_pengiriman', $pesanan->alamat_pengiriman) }}</textarea>
 
+    <h4 class="form-bagian"><span class="lnr lnr-pencil"></span>Detail pakaian</h4>
     <div class="row">
         @foreach ($pilihan as $kolom => $label)
             @php
@@ -79,8 +81,9 @@
     <textarea id="detail_pesanan" name="detail_pesanan" class="form-control"
               placeholder="Mis. ukuran badan, referensi model, tanggal dibutuhkan">{{ old('detail_pesanan', $pesanan->detail_pesanan ?? '') }}</textarea>
 
-    <div class="text-center mt-30">
-        <button type="submit" class="submit-btn primary-btn text-uppercase">{{ $tombol }}<span class="lnr lnr-arrow-right"></span></button>
+    <div class="form-aksi">
+        <a href="{{ $batal ?? route('pelanggan.pemesanan') }}" class="form-batal">Batal</a>
+        <button type="submit" class="submit-btn primary-btn text-uppercase">{{ $tombol }}<i class="arr"></i></button>
     </div>
 </form>
 

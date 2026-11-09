@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Pelanggan;
 use App\Models\Pesanan;
+use App\Models\Produk;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -30,6 +31,22 @@ class PesananFactory extends Factory
             'detail_pesanan' => fake()->sentence(),
             'status' => 'baru',
         ];
+    }
+
+    /** Pesanan Rental (sewa busana dari Collection). */
+    public function rental(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'tipe' => 'rental',
+            'id_produk' => Produk::factory(),
+            'model_lengan' => null,
+            'bahan' => null,
+            'warna' => null,
+            'tanggal_sewa' => now()->addDay()->toDateString(),
+            'tanggal_kembali' => now()->addDays(3)->toDateString(),
+            'status' => 'dipinjam',
+            'total' => 100000,
+        ]);
     }
 
     public function status(string $status): static

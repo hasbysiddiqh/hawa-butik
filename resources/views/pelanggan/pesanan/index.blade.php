@@ -8,7 +8,7 @@
             <h1>Pesanan Saya</h1>
             <p class="lead-text mb-0">{{ $pesanans->total() }} pesanan tercatat.</p>
         </div>
-        <a href="{{ route('pelanggan.pemesanan') }}" class="submit-btn primary-btn text-uppercase">PEMESANAN<span class="lnr lnr-arrow-right"></span></a>
+        <a href="{{ route('pelanggan.pemesanan') }}" class="submit-btn primary-btn text-uppercase">PEMESANAN<i class="arr"></i></a>
     </div>
 
     <div class="table-responsive pesanan-card p-0">

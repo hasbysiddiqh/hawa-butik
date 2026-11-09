@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\PesananFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,6 +36,7 @@ class Pesanan extends Model
         'detail_pesanan',
         'status',
         'total',
+        'stok_dipotong',
         'id_admin_verifikasi',
     ];
 
@@ -52,22 +54,45 @@ class Pesanan extends Model
 
     public const TIPE = ['pesan', 'rental'];
 
-    /** Nilai di database => teks yang dilihat pengguna. */
-    public const LABEL_STATUS = [
-        'baru'       => 'Baru',
-        'diproses'   => 'Dikerjakan',
-        'selesai'    => 'Selesai',
-        'dibatalkan' => 'Dibatalkan',
+    /** Status "Pesan (Kustom)": nilai di database => teks yang dilihat pengguna. */
+    public const LABEL_STATUS_KUSTOM = [
+        'baru'         => 'Baru',
+        'diproses'     => 'Dikerjakan',
+        'siap_diambil' => 'Siap diambil',
+        'selesai'      => 'Selesai',
+        'dibatalkan'   => 'Dibatalkan',
     ];
 
-    public const STATUS = ['baru', 'diproses', 'selesai', 'dibatalkan'];
+    /** Status "Rental". Nilainya juga disalin ke penyewaans.status_sewa. */
+    public const LABEL_STATUS_RENTAL = [
+        'dipinjam'           => 'Dipinjam',
+        'belum_dikembalikan' => 'Belum dikembalikan',
+        'dikembalikan'       => 'Dikembalikan',
+    ];
 
-    /** Perpindahan status yang diperbolehkan untuk admin. Selesai dan dibatalkan bersifat final. */
-    public const TRANSISI_STATUS = [
-        'baru'       => ['diproses', 'dibatalkan'],
-        'diproses'   => ['selesai', 'dibatalkan'],
-        'selesai'    => [],
-        'dibatalkan' => [],
+    /** Semua label status, untuk lencana pada daftar yang bisa memuat kedua jenis pesanan. */
+    public const LABEL_STATUS = [...self::LABEL_STATUS_KUSTOM, ...self::LABEL_STATUS_RENTAL];
+
+    public const STATUS_KUSTOM = ['baru', 'diproses', 'siap_diambil', 'selesai', 'dibatalkan'];
+
+    public const STATUS_RENTAL = ['dipinjam', 'belum_dikembalikan', 'dikembalikan'];
+
+    public const STATUS = [...self::STATUS_KUSTOM, ...self::STATUS_RENTAL];
+
+    /** Perpindahan status Kustom yang diperbolehkan untuk admin. Selesai dan dibatalkan bersifat final. */
+    public const TRANSISI_KUSTOM = [
+        'baru'         => ['diproses', 'dibatalkan'],
+        'diproses'     => ['siap_diambil', 'dibatalkan'],
+        'siap_diambil' => ['selesai', 'dibatalkan'],
+        'selesai'      => [],
+        'dibatalkan'   => [],
+    ];
+
+    /** Perpindahan status Rental yang diperbolehkan untuk admin. Dikembalikan bersifat final. */
+    public const TRANSISI_RENTAL = [
+        'dipinjam'           => ['belum_dikembalikan', 'dikembalikan'],
+        'belum_dikembalikan' => ['dikembalikan'],
+        'dikembalikan'       => [],
     ];
 
     /** @return array<string, string> */
@@ -76,6 +101,7 @@ class Pesanan extends Model
         return [
             'tanggal_sewa'    => 'date',
             'tanggal_kembali' => 'date',
+            'stok_dipotong'   => 'boolean',
         ];
     }
 
@@ -115,6 +141,18 @@ class Pesanan extends Model
         return $this->belongsTo(Admin::class, 'id_admin_verifikasi', 'id_admin');
     }
 
+    /** Pesanan Rental (sewa busana dari Collection). */
+    public function scopeRental(Builder $query): void
+    {
+        $query->where('tipe', 'rental');
+    }
+
+    /** Pesanan "Pesan (Kustom)" (jahit custom). */
+    public function scopeKustom(Builder $query): void
+    {
+        $query->where('tipe', 'pesan');
+    }
+
     public function isRental(): bool
     {
         return $this->tipe === 'rental';
@@ -125,7 +163,7 @@ class Pesanan extends Model
         return $this->isRental() ? 'Rental' : 'Pesan (jahit custom)';
     }
 
-    /** Hanya pesanan jahit custom yang bisa diubah isinya; rental cukup dibatalkan lalu dibuat ulang. */
+    /** Hanya pesanan Pesan (Kustom) yang bisa diubah isinya; rental tidak bisa diubah pelanggan. */
     public function bisaDiedit(): bool
     {
         return $this->bisaDiubah() && ! $this->isRental();
@@ -155,7 +193,9 @@ class Pesanan extends Model
      */
     public function statusBerikutnya(): array
     {
-        return self::TRANSISI_STATUS[$this->status] ?? [];
+        $transisi = $this->isRental() ? self::TRANSISI_RENTAL : self::TRANSISI_KUSTOM;
+
+        return $transisi[$this->status] ?? [];
     }
 
     public function bisaDiubahStatusKe(string $status): bool

@@ -8,7 +8,7 @@
         .auth-card { border: 1px solid #eee; background: #fff; }
         .auth-card .isi { padding: 40px 36px; }
         .auth-card .tautan { font-size: 14px; color: #777; }
-        .auth-card .tautan a { color: #7a77ff; font-weight: 600; }
+        .auth-card .tautan a { color: #a67c52; font-weight: 600; }
         .auth-card .badge-peran { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background: #eef0ff; color: #4b3fc4; margin-bottom: 14px; }
         .auth-card .bantuan { font-size: 12px; color: #999; margin-top: 4px; }
     </style>
@@ -77,7 +77,7 @@
 
                             <div class="mt-30">
                                 <button type="submit" class="primary-btn btn-kecil border-0 text-uppercase">
-                                    Daftar<span class="lnr lnr-arrow-right"></span>
+                                    Daftar<i class="arr"></i>
                                 </button>
                             </div>
                         </form>

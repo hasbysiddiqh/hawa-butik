@@ -10,7 +10,7 @@
 
     <form class="pesanan-form pesanan-card mb-30" action="{{ route('admin.kategori.store') }}" method="POST">
         @csrf
-        <h4>Tambah kategori</h4>
+        <h4 class="form-bagian"><span class="lnr lnr-list"></span>Tambah kategori</h4>
         <div class="row">
             <div class="col-md-5">
                 <label for="nama_kategori">Nama kategori</label>
@@ -21,7 +21,9 @@
                 <input id="deskripsi" name="deskripsi" type="text" class="form-control" maxlength="1000" value="{{ old('deskripsi') }}">
             </div>
         </div>
-        <div class="mt-30"><button type="submit" class="submit-btn primary-btn text-uppercase">TAMBAH<span class="lnr lnr-arrow-right"></span></button></div>
+        <div class="form-aksi">
+            <button type="submit" class="submit-btn primary-btn text-uppercase">TAMBAH<i class="arr"></i></button>
+        </div>
     </form>
 
     <div class="table-responsive pesanan-card p-0">

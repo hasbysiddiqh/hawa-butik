@@ -5,9 +5,21 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KatalogController;
 use App\Http\Controllers\Pelanggan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => view('home'))->name('home');
+Route::get('/', function () {
+    // Admin tidak memakai halaman utama: langsung ke dashboard.
+    if (Auth::guard('admin')->check()) {
+        return redirect()->route('admin.dashboard');
+    }
+
+    return view('home', [
+        'kategoris' => \App\Models\Kategori::orderBy('nama_kategori')->get(),
+        'produkTerbaru' => \App\Models\Produk::with('kategori')
+            ->where('status_produk', 'aktif')->latest()->take(8)->get(),
+    ]);
+})->name('home');
 
 // Collection (katalog busana, dikelompokkan per jenis pakaian) terbuka untuk umum.
 Route::get('/collection', [KatalogController::class, 'index'])->name('katalog.index');
@@ -54,6 +66,10 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::get('/pesanan', [Admin\PesananController::class, 'index'])->name('pesanan.index');
     Route::get('/pesanan/{pesanan}', [Admin\PesananController::class, 'show'])->name('pesanan.show');
     Route::patch('/pesanan/{pesanan}/status', [Admin\PesananController::class, 'updateStatus'])->name('pesanan.status');
+
+    Route::get('/transaksi', [Admin\TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::get('/transaksi/{pembayaran}', [Admin\TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::patch('/transaksi/{pembayaran}', [Admin\TransaksiController::class, 'update'])->name('transaksi.update');
 
     Route::resource('kategori', Admin\KategoriController::class)->except(['show', 'create']);
     Route::resource('produk', Admin\ProdukController::class)->except(['show']);

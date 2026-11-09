@@ -57,7 +57,7 @@ class LoginController extends Controller
         $request->session()->regenerate();
 
         if ($data['peran'] === 'admin') {
-            return redirect()->intended(route('home'));
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         $this->lupakanTujuanHalamanAdmin($request);

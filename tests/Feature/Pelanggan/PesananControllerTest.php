@@ -294,4 +294,20 @@ class PesananControllerTest extends TestCase
             ->assertSee('Dikerjakan')
             ->assertSee('sudah dikerjakan');
     }
+
+    public function test_new_kustom_order_gets_a_waiting_transaction_without_payment(): void
+    {
+        $this->actingAs($this->pelanggan(), 'pelanggan')
+            ->post(route('pelanggan.pesanan.store'), $this->dataValid())
+            ->assertRedirect();
+
+        $pesanan = Pesanan::firstOrFail();
+
+        $this->assertSame(0, (int) $pesanan->total);
+        $this->assertDatabaseHas('pembayarans', [
+            'id_pesanan' => $pesanan->id,
+            'status_bayar' => 'menunggu',
+            'jumlah_bayar' => 0,
+        ]);
+    }
 }

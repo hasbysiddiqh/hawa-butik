@@ -3,14 +3,12 @@
 @section('judul', 'Profil Saya')
 
 @section('isi')
-    <div class="row justify-content-center">
-        <div class="col-lg-7 col-md-10">
-            <div class="text-center">
-                <h1>Profil Saya</h1>
-                <p class="lead-text">Terdaftar sejak {{ $pelanggan->tanggal_daftar?->format('d M Y') }}.</p>
-            </div>
+    <h1>Profil Saya</h1>
+    <p class="lead-text">Terdaftar sejak {{ $pelanggan->tanggal_daftar?->format('d M Y') }}.</p>
 
-            @include('partials.validation-errors')
+    @include('partials.validation-errors')
+
+    <div class="profil-grid">
 
             <form class="pesanan-form pesanan-card" action="{{ route('pelanggan.profil.update') }}" method="POST">
                 @csrf
@@ -36,12 +34,12 @@
                 <label for="alamat">Alamat</label>
                 <textarea id="alamat" name="alamat" class="form-control" maxlength="500">{{ old('alamat', $pelanggan->alamat) }}</textarea>
 
-                <div class="text-center mt-30">
-                    <button type="submit" class="submit-btn primary-btn text-uppercase">SIMPAN PROFIL<span class="lnr lnr-arrow-right"></span></button>
+                <div class="form-aksi">
+                    <button type="submit" class="submit-btn primary-btn text-uppercase">SIMPAN PROFIL<i class="arr"></i></button>
                 </div>
             </form>
 
-            <form class="pesanan-form pesanan-card mt-30" action="{{ route('pelanggan.profil.password') }}" method="POST">
+            <form class="pesanan-form pesanan-card" action="{{ route('pelanggan.profil.password') }}" method="POST">
                 @csrf
                 @method('PUT')
                 <h4>Ganti kata sandi</h4>
@@ -50,25 +48,19 @@
                 <input id="password_lama" name="password_lama" type="password" class="form-control" autocomplete="current-password" required>
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-12">
                         <label for="password">Kata sandi baru</label>
                         <input id="password" name="password" type="password" class="form-control" placeholder="Minimal 8 karakter" autocomplete="new-password" required>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12">
                         <label for="password_confirmation">Ulangi kata sandi baru</label>
                         <input id="password_confirmation" name="password_confirmation" type="password" class="form-control" autocomplete="new-password" required>
                     </div>
                 </div>
 
-                <div class="text-center mt-30">
-                    <button type="submit" class="submit-btn primary-btn text-uppercase">GANTI KATA SANDI<span class="lnr lnr-arrow-right"></span></button>
+                <div class="form-aksi">
+                    <button type="submit" class="submit-btn primary-btn text-uppercase">GANTI KATA SANDI<i class="arr"></i></button>
                 </div>
             </form>
-
-            <form action="{{ route('logout') }}" method="POST" class="text-center mt-30">
-                @csrf
-                <button type="submit" class="submit-btn primary-btn text-uppercase">KELUAR<span class="lnr lnr-arrow-right"></span></button>
-            </form>
-        </div>
     </div>
 @endsection

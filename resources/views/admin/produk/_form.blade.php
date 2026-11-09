@@ -7,6 +7,7 @@
         @method($metode)
     @endif
 
+    <h4 class="form-bagian"><span class="lnr lnr-tag"></span>Informasi produk</h4>
     <label for="nama_produk">Nama produk</label>
     <input id="nama_produk" name="nama_produk" type="text" class="form-control" maxlength="150" value="{{ old('nama_produk', $produk->nama_produk) }}" required>
 
@@ -28,6 +29,13 @@
                 @endforeach
             </select>
         </div>
+    </div>
+
+    <label for="deskripsi">Deskripsi</label>
+    <textarea id="deskripsi" name="deskripsi" class="form-control" maxlength="2000">{{ old('deskripsi', $produk->deskripsi) }}</textarea>
+
+    <h4 class="form-bagian"><span class="lnr lnr-cart"></span>Harga &amp; stok</h4>
+    <div class="row">
         <div class="col-md-6">
             <label for="harga_sewa">Harga sewa (Rp)</label>
             <input id="harga_sewa" name="harga_sewa" type="number" min="0" class="form-control" value="{{ old('harga_sewa', $produk->harga_sewa) }}" required>
@@ -38,17 +46,16 @@
         </div>
     </div>
 
-    <label for="deskripsi">Deskripsi</label>
-    <textarea id="deskripsi" name="deskripsi" class="form-control" maxlength="2000">{{ old('deskripsi', $produk->deskripsi) }}</textarea>
-
-    <label for="foto_produk">Foto produk (JPG, PNG, atau WebP, maks. 2 MB)</label>
+    <h4 class="form-bagian"><span class="lnr lnr-picture"></span>Foto produk</h4>
+    <label for="foto_produk">JPG, PNG, atau WebP, maks. 2 MB</label>
     @if ($produk->fotoUrl())
         <div class="mb-2"><img src="{{ $produk->fotoUrl() }}" alt="" style="max-width: 140px"></div>
         <small class="text-muted d-block mb-2">Pilih file baru hanya jika ingin mengganti foto.</small>
     @endif
     <input id="foto_produk" name="foto_produk" type="file" class="form-control" accept="image/jpeg,image/png,image/webp">
 
-    <div class="text-center mt-30">
-        <button type="submit" class="submit-btn primary-btn text-uppercase">{{ $tombol }}<span class="lnr lnr-arrow-right"></span></button>
+    <div class="form-aksi">
+        <a href="{{ route('admin.produk.index') }}" class="form-batal">Batal</a>
+        <button type="submit" class="submit-btn primary-btn text-uppercase">{{ $tombol }}<i class="arr"></i></button>
     </div>
 </form>

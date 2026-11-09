@@ -1,0 +1,6 @@
+Taruh dua file font di folder ini (namanya harus persis):
+
+  Manrope.ttf   <- dari Google Fonts > Manrope > Download family > file "Manrope-VariableFont_wght.ttf" (ganti nama)
+  DMSans.ttf    <- dari Google Fonts > DM Sans  > Download family > file "DMSans-VariableFont_opsz,wght.ttf" (ganti nama)
+
+Setelah itu font tampil sama di semua laptop tanpa perlu internet.

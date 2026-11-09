@@ -1,13 +1,12 @@
+{{-- Sub-navigasi Collection (admin): hanya Produk dan Kategori, di tengah atas halaman. --}}
 @php
     $menu = [
-        ['admin.dashboard', 'admin.dashboard', 'Ringkasan'],
-        ['admin.pesanan.index', 'admin.pesanan.*', 'Pesanan'],
         ['admin.produk.index', 'admin.produk.*', 'Produk'],
         ['admin.kategori.index', 'admin.kategori.*', 'Kategori'],
     ];
 @endphp
-<ul class="nav subnav">
+<ul class="subnav-koleksi" aria-label="Collection">
     @foreach ($menu as [$rute, $pola, $label])
-        <li class="nav-item"><a class="nav-link {{ request()->routeIs($pola) ? 'active' : '' }}" href="{{ route($rute) }}">{{ $label }}</a></li>
+        <li><a class="{{ request()->routeIs($pola) ? 'active' : '' }}" href="{{ route($rute) }}" @if (request()->routeIs($pola)) aria-current="page" @endif>{{ $label }}</a></li>
     @endforeach
 </ul>

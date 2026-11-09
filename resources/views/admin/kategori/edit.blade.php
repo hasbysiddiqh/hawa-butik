@@ -4,9 +4,12 @@
 
 @section('isi')
     <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-10">
-            <a href="{{ route('admin.kategori.index') }}" class="btn-back"><span class="lnr lnr-arrow-left"></span>KEMBALI</a>
-            <div class="text-center"><h1>Ubah Kategori</h1></div>
+        <div class="col-lg-7 col-md-10">
+            <a href="{{ route('admin.kategori.index') }}" class="btn-back"><i class="arr arr-left"></i>KEMBALI</a>
+            <div class="text-center">
+                <h1>Ubah Kategori</h1>
+                <p class="lead-text">Perbarui nama dan deskripsi kelompok produk.</p>
+            </div>
 
             @include('partials.validation-errors')
 
@@ -20,8 +23,9 @@
                 <label for="deskripsi">Deskripsi (opsional)</label>
                 <textarea id="deskripsi" name="deskripsi" class="form-control" maxlength="1000">{{ old('deskripsi', $kategori->deskripsi) }}</textarea>
 
-                <div class="text-center mt-30">
-                    <button type="submit" class="submit-btn primary-btn text-uppercase">SIMPAN PERUBAHAN<span class="lnr lnr-arrow-right"></span></button>
+                <div class="form-aksi">
+                    <a href="{{ route('admin.kategori.index') }}" class="form-batal">Batal</a>
+                    <button type="submit" class="submit-btn primary-btn text-uppercase">SIMPAN PERUBAHAN<i class="arr"></i></button>
                 </div>
             </form>
         </div>

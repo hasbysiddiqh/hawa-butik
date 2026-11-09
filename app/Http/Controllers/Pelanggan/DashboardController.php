@@ -3,27 +3,41 @@
 namespace App\Http\Controllers\Pelanggan;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
+use App\Models\Pesanan;
+use App\Models\Produk;
+use App\Support\DataDashboard as D;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
-    /** Ringkasan akun pelanggan: pesanan dan jalan pintas. */
-    public function index(Request $request): View
+    public function index()
     {
-        $pelanggan = $request->user('pelanggan');
+        $user = Auth::guard('pelanggan')->user();
 
-        $perStatus = $pelanggan->pesanans()
-            ->selectRaw('status, count(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status');
+        // Hanya pesanan milik pelanggan ini. Kalau kolom penghubung tidak ditemukan, tampil kosong (aman).
+        $tabel = (new Pesanan)->getTable();
+        $fk = collect(['pelanggan_id', 'id_pelanggan', 'user_id'])->first(fn ($k) => Schema::hasColumn($tabel, $k));
+        $semua = $fk ? Pesanan::where($fk, $user->getKey())->latest()->get() : collect();
+        $baris = $semua->map(fn ($p) => D::baris($p));
+
+        $hitung = $baris->countBy('key');
+        $aktif = $hitung->get('baru', 0) + $hitung->get('proses', 0);
+        $selesai = $hitung->get('selesai', 0);
+
+        $koleksi = Produk::with('kategori')->where('status_produk', 'aktif')->latest()->take(3)->get()
+            ->map(fn ($p) => D::produk($p));
 
         return view('pelanggan.dashboard', [
-            'pelanggan'     => $pelanggan,
-            'totalPesanan'  => $perStatus->sum(),
-            'pesananBerjalan' => ($perStatus['baru'] ?? 0) + ($perStatus['diproses'] ?? 0),
-            'pesananSelesai'  => $perStatus['selesai'] ?? 0,
-            'pesananTerbaru' => $pelanggan->pesanans()->latest()->limit(5)->get(),
+            'nama' => D::pick($user, ['nama', 'nama_lengkap', 'nama_pelanggan', 'name', 'username'], 'Pelanggan'),
+            'tanggal' => D::tanggalIndonesia(),
+            'aktif' => $aktif,
+            'selesai' => $selesai,
+            'persen' => $baris->count() ? (int) round($selesai / $baris->count() * 100) : 0,
+            'total' => $baris->count(),
+            'bulan' => D::bulanan($semua),
+            'terbaru' => $baris->take(4),
+            'koleksi' => $koleksi,
         ]);
     }
 }

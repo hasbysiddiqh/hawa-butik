@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Pesanan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class PesananController extends Controller
@@ -39,7 +40,17 @@ class PesananController extends Controller
     {
         $data = $this->normalisasi($request->validate($this->aturan(), $this->pesan()));
 
-        $pesanan = $request->user('pelanggan')->pesanans()->create([...$data, 'status' => 'baru']);
+        // Total pesanan jahit baru ditetapkan admin setelah estimasi, jadi transaksi dimulai dari nol.
+        $pesanan = DB::transaction(function () use ($request, $data) {
+            $pesanan = $request->user('pelanggan')->pesanans()->create([...$data, 'status' => 'baru']);
+
+            $pesanan->pembayaran()->create([
+                'jumlah_bayar' => 0,
+                'status_bayar' => 'menunggu',
+            ]);
+
+            return $pesanan;
+        });
 
         return redirect()
             ->route('pelanggan.pesanan.show', $pesanan)
@@ -92,6 +103,10 @@ class PesananController extends Controller
     {
         $pesanan = $this->milikSaya($request, $pesanan);
 
+        if ($pesanan->isRental()) {
+            return $this->tolakUbahRental($pesanan);
+        }
+
         if (! $pesanan->bisaDiubah()) {
             return $this->tolakKarenaSudahDikerjakan($pesanan);
         }
@@ -113,7 +128,7 @@ class PesananController extends Controller
     {
         return redirect()
             ->route('pelanggan.pesanan.show', $pesanan)
-            ->with('error', 'Pesanan rental tidak dapat diubah. Batalkan lalu buat rental baru jika ada yang salah.');
+            ->with('error', 'Pesanan rental tidak dapat diubah atau dibatalkan sendiri. Hubungi admin jika ada yang perlu diperbaiki.');
     }
 
     private function tolakKarenaSudahDikerjakan(Pesanan $pesanan): RedirectResponse

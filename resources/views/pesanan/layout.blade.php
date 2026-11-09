@@ -49,7 +49,7 @@
                     <div class="main-menubar d-flex align-items-center">
                         <nav class="hide">
                             <a href="{{ url('/') }}">Home</a>
-                            <a href="{{ url('/#about') }}">About Me</a>
+                            <a href="{{ url('/#about') }}">About</a>
                             <a href="{{ url('/#gallery') }}">Collection</a>
                             <a href="{{ url('/#contact') }}">Contact</a>
                             @include('partials.auth-nav')
