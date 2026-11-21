@@ -35,7 +35,7 @@
             </div>
 
             <ul class="auth3-trust">
-                <li><span class="lnr lnr-tag"></span>Rental Busana</li>
+                <li><span class="lnr lnr-tag"></span>Sewa Busana</li>
                 <li><span class="lnr lnr-pencil"></span>Jahit Custom</li>
                 <li><span class="lnr lnr-checkmark-circle"></span>Pesanan Terpantau</li>
             </ul>

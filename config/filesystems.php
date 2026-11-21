@@ -48,6 +48,15 @@ return [
             'report' => false,
         ],
 
+        // Lampiran catatan pemesanan, disimpan di public/uploads/lampiran dengan alasan yang sama.
+        'lampiran' => [
+            'driver' => 'local',
+            'root' => public_path('uploads/lampiran'),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

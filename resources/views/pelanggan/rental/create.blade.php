@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('judul', 'Rental')
+@section('judul', 'Sewa')
 
 @section('isi')
     <div class="row justify-content-center">
@@ -8,13 +8,13 @@
             <a href="{{ route('pelanggan.pemesanan') }}" class="btn-back"><i class="arr arr-left"></i>KEMBALI</a>
 
             <div class="text-center">
-                <h1>Rental</h1>
+                <h1>Sewa</h1>
                 <p class="lead-text">Pilih busana dari Collection, lalu tentukan tanggal sewa dan tanggal kembali.</p>
             </div>
 
             @include('partials.validation-errors')
 
-            <form class="pesanan-form pesanan-card" action="{{ route('pelanggan.rental.store') }}" method="POST">
+            <form class="pesanan-form pesanan-card" action="{{ route('pelanggan.rental.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <h4 class="form-bagian"><span class="lnr lnr-tag"></span>Pilih busana</h4>
@@ -85,9 +85,11 @@
                 <textarea id="detail_pesanan" name="detail_pesanan" class="form-control" maxlength="2000"
                           placeholder="Contoh: acara wisuda, butuh dipakai jam 7 pagi">{{ old('detail_pesanan') }}</textarea>
 
+                @include('partials.lampiran-metode')
+
                 <div class="form-aksi">
                     <a href="{{ route('pelanggan.pemesanan') }}" class="form-batal">Batal</a>
-                    <button type="submit" class="submit-btn primary-btn text-uppercase">KONFIRMASI RENTAL<i class="arr"></i></button>
+                    <button type="submit" class="submit-btn primary-btn text-uppercase">KONFIRMASI SEWA<i class="arr"></i></button>
                 </div>
             </form>
         </div>

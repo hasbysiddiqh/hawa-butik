@@ -15,7 +15,7 @@ use Illuminate\View\View;
 class PesananController extends Controller
 {
     /**
-     * Pesanan semua pelanggan dalam dua tabel: Rental dan Pesan (Kustom).
+     * Pesanan semua pelanggan dalam dua tabel: Sewa dan Pesan (Kustom).
      * Pencarian berlaku untuk keduanya; saringan status dan halaman terpisah per tabel.
      */
     public function index(Request $request): View

@@ -16,6 +16,7 @@ class Penyewaan extends Model
         'tgl_kembali',
         'tgl_selesai',
         'denda',
+        'catatan_denda',
         'status_sewa',
     ];
 

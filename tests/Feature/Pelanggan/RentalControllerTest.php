@@ -7,6 +7,7 @@ use App\Models\Pelanggan;
 use App\Models\Pesanan;
 use App\Models\Produk;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class RentalControllerTest extends TestCase
@@ -26,6 +27,7 @@ class RentalControllerTest extends TestCase
             'tanggal_sewa' => now()->addDays(3)->toDateString(),
             'tanggal_kembali' => now()->addDays(5)->toDateString(),
             'detail_pesanan' => 'Untuk wisuda',
+            'metode' => 'tunai',
         ], $timpa);
     }
 
@@ -88,6 +90,34 @@ class RentalControllerTest extends TestCase
             'status_bayar' => 'menunggu',
             'jumlah_bayar' => 0,
         ]);
+    }
+
+    public function test_rental_saves_metode_and_lampiran(): void
+    {
+        $produk = Produk::factory()->create(['stok' => 3]);
+
+        $this->actingAs(Pelanggan::factory()->create(), 'pelanggan')
+            ->post(route('pelanggan.rental.store'), $this->dataValid($produk, [
+                'metode' => 'debit',
+                'lampiran' => UploadedFile::fake()->image('referensi.jpg'),
+            ]))
+            ->assertRedirect();
+
+        $pesanan = Pesanan::firstOrFail();
+        $this->assertNotNull($pesanan->lampiran);
+        $this->assertFileExists(public_path('uploads/lampiran/'.$pesanan->lampiran));
+        $this->assertSame('debit', $pesanan->pembayaran->metode);
+
+        @unlink(public_path('uploads/lampiran/'.$pesanan->lampiran));
+    }
+
+    public function test_rental_requires_a_valid_metode(): void
+    {
+        $produk = Produk::factory()->create(['stok' => 3]);
+
+        $this->actingAs(Pelanggan::factory()->create(), 'pelanggan')
+            ->post(route('pelanggan.rental.store'), $this->dataValid($produk, ['metode' => 'kartu']))
+            ->assertSessionHasErrors('metode');
     }
 
     public function test_rental_requires_return_date_not_before_start_date(): void

@@ -43,10 +43,10 @@ Route::middleware('auth:pelanggan')->prefix('pelanggan')->name('pelanggan.')->gr
     Route::put('/profil', [Pelanggan\ProfilController::class, 'update'])->name('profil.update');
     Route::put('/profil/password', [Pelanggan\ProfilController::class, 'updatePassword'])->name('profil.password');
 
-    // Pemesanan: pilih Rental (sewa dari Collection) atau Pesan (jahit custom).
+    // Pemesanan: pilih Sewa (sewa dari Collection) atau Pesan (jahit custom).
     Route::view('/pemesanan', 'pelanggan.pemesanan.index')->name('pemesanan');
-    Route::get('/rental', [Pelanggan\RentalController::class, 'create'])->name('rental.create');
-    Route::post('/rental', [Pelanggan\RentalController::class, 'store'])->name('rental.store');
+    Route::get('/sewa', [Pelanggan\RentalController::class, 'create'])->name('rental.create');
+    Route::post('/sewa', [Pelanggan\RentalController::class, 'store'])->name('rental.store');
 
     Route::get('/pesanan', [Pelanggan\PesananController::class, 'index'])->name('pesanan.index');
     Route::get('/pesanan/buat', [Pelanggan\PesananController::class, 'create'])->name('pesanan.create');

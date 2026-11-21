@@ -72,13 +72,42 @@
                     @endforeach
                 </select>
 
+                @php($statusAwal = old('status_bayar', $transaksi->status_bayar))
                 <label for="jumlah_bayar">Jumlah dibayar (Rp)</label>
-                <input id="jumlah_bayar" name="jumlah_bayar" type="number" min="0" class="form-control" value="{{ old('jumlah_bayar', (int) $transaksi->jumlah_bayar) }}">
-                <small class="text-muted">Hanya dipakai untuk status "Dicicil".</small>
+                <input id="jumlah_bayar" name="jumlah_bayar" type="number" min="0" class="form-control"
+                       value="{{ $statusAwal === 'dicicil' ? old('jumlah_bayar', (int) $transaksi->jumlah_bayar) : 0 }}"
+                       @disabled($statusAwal !== 'dicicil')>
+                <small class="text-muted">Hanya bisa diisi untuk status "Dicicil".</small>
+
+                @if ($pesanan->isRental())
+                    <label for="denda">Denda (Rp)</label>
+                    <input id="denda" name="denda" type="number" min="0" class="form-control" value="{{ old('denda', (int) ($pesanan->penyewaan?->denda ?? 0)) }}">
+
+                    <label for="catatan_denda">Alasan denda (opsional)</label>
+                    <textarea id="catatan_denda" name="catatan_denda" class="form-control" maxlength="500" style="height: 80px"
+                              placeholder="Contoh: terlambat mengembalikan 2 hari / ada noda pada busana">{{ old('catatan_denda', $pesanan->penyewaan?->catatan_denda) }}</textarea>
+                    <small class="text-muted">Alasan ini bisa dilihat pelanggan di detail pesanannya.</small>
+                @endif
 
                 <button type="submit" class="submit-btn primary-btn btn-kecil">SIMPAN TRANSAKSI</button>
             </form>
-            <small class="text-muted d-block kelola-catatan">"Lunas" mengisi jumlah dibayar sebesar total. "Menunggu" dan "Belum dibayar" mengosongkan jumlah dibayar.</small>
+            <small class="text-muted d-block kelola-catatan">"Lunas" tercatat otomatis sebesar total. "Menunggu" dan "Belum dibayar" mengosongkan jumlah dibayar.</small>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function () {
+        var status = document.getElementById('status_bayar');
+        var jumlah = document.getElementById('jumlah_bayar');
+        function atur() {
+            var dicicil = status.value === 'dicicil';
+            jumlah.disabled = ! dicicil;
+            if (! dicicil) { jumlah.value = 0; }
+        }
+        status.addEventListener('change', atur);
+        atur();
+    })();
+</script>
+@endpush

@@ -10,7 +10,7 @@
         <a href="{{ route('pelanggan.rental.create') }}" class="pilihan-card">
             <span class="lnr lnr-tag"></span>
             <div>
-                <h4>Rental</h4>
+                <h4>Sewa</h4>
                 <p class="text-muted">Sewa busana pilihan dari Collection Hawa Butik untuk acara spesialmu.</p>
             </div>
             <i class="arr"></i>

@@ -36,7 +36,7 @@
         <div class="dc">
             <div class="dc-head"><h5>Jenis pemesanan</h5></div>
             <div class="dquick">
-                <a href="{{ route('pelanggan.rental.create') }}"><span class="lnr lnr-calendar-full"></span>Rental</a>
+                <a href="{{ route('pelanggan.rental.create') }}"><span class="lnr lnr-calendar-full"></span>Sewa</a>
                 <a href="{{ route('pelanggan.pesanan.create') }}"><span class="lnr lnr-pencil"></span>Jahit custom</a>
                 <a href="{{ route('home') }}#gallery"><span class="lnr lnr-diamond"></span>Collection</a>
             </div>
@@ -51,7 +51,7 @@
                 <ul class="dlist">
                     @foreach ($terbaru as $t)
                         <li>
-                            <span class="dmini"><span class="lnr {{ $t['jenis'] === 'Rental' ? 'lnr-calendar-full' : 'lnr-pencil' }}"></span></span>
+                            <span class="dmini"><span class="lnr {{ $t['jenis'] === 'Sewa' ? 'lnr-calendar-full' : 'lnr-pencil' }}"></span></span>
                             <div class="grow">
                                 <b>{{ $t['pakaian'] }}</b>
                                 <small>{{ $t['jenis'] }} · {{ $t['jumlah'] }} pcs · {{ $t['tanggal'] }}</small>

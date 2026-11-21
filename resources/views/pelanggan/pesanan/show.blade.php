@@ -28,6 +28,9 @@
                         @if ($pesanan->penyewaan)
                             <dt class="col-sm-4">Tanggal selesai sewa</dt><dd class="col-sm-8">{{ $pesanan->penyewaan->tgl_selesai?->format('d M Y') ?? '-' }}</dd>
                             <dt class="col-sm-4">Denda</dt><dd class="col-sm-8">Rp {{ number_format((int) $pesanan->penyewaan->denda, 0, ',', '.') }}</dd>
+                            @if ((int) $pesanan->penyewaan->denda > 0 && $pesanan->penyewaan->catatan_denda)
+                                <dt class="col-sm-4">Alasan denda</dt><dd class="col-sm-8">{!! nl2br(e($pesanan->penyewaan->catatan_denda)) !!}</dd>
+                            @endif
                         @endif
                     @else
                         <dt class="col-sm-4">Model lengan</dt><dd class="col-sm-8">{{ $pesanan->model_lengan ?? '-' }}</dd>
@@ -47,6 +50,7 @@
                         @endif
                     @endif
                     <dt class="col-sm-4">Catatan</dt><dd class="col-sm-8">{!! nl2br(e($pesanan->detail_pesanan ?: '-')) !!}</dd>
+                <dt class="col-sm-4">Lampiran</dt><dd class="col-sm-8">@if ($pesanan->urlLampiran())<a href="{{ $pesanan->urlLampiran() }}" target="_blank" rel="noopener">Lihat lampiran</a>@else - @endif</dd>
                 </dl>
             </div>
 
@@ -65,7 +69,7 @@
             @elseif ($pesanan->status === 'dibatalkan')
                 <p class="catatan-detail">Pesanan ini sudah dibatalkan.</p>
             @elseif ($pesanan->isRental())
-                <p class="catatan-detail">Pesanan rental tidak dapat diubah atau dibatalkan sendiri. Hubungi admin jika ada yang perlu diperbaiki.</p>
+                <p class="catatan-detail">Pesanan sewa tidak dapat diubah atau dibatalkan sendiri. Hubungi admin jika ada yang perlu diperbaiki.</p>
             @else
                 <p class="catatan-detail">Pesanan sudah {{ $pesanan->status === 'selesai' ? 'selesai' : 'dikerjakan' }}, sehingga tidak dapat diubah atau dibatalkan.</p>
             @endif

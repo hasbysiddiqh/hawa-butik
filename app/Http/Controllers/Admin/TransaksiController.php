@@ -58,6 +58,7 @@ class TransaksiController extends Controller
     /**
      * Mengubah status transaksi dan metode pembayaran.
      * Pesanan jahit custom: admin juga menetapkan total (hasil estimasi) dari sini.
+     * Pesanan sewa: admin juga mengisi denda dari sini.
      * Lunas: jumlah dibayar otomatis sama dengan total pesanan.
      * Dicicil: jumlah dibayar diisi admin, harus kurang dari total.
      * Menunggu / belum dibayar: belum ada uang masuk, jumlah dibayar menjadi 0.
@@ -71,6 +72,8 @@ class TransaksiController extends Controller
             'metode'       => ['nullable', Rule::in(array_keys(Pembayaran::LABEL_METODE)), Rule::requiredIf(in_array($status, ['dicicil', 'lunas'], true))],
             'jumlah_bayar' => ['nullable', 'integer', 'min:0', 'max:4000000000', Rule::requiredIf($status === 'dicicil')],
             'total'        => ['nullable', 'integer', 'min:0', 'max:4000000000'],
+            'denda'        => ['nullable', 'integer', 'min:0', 'max:4000000000'],
+            'catatan_denda' => ['nullable', 'string', 'max:500'],
         ], [
             'required' => ':attribute wajib diisi.',
             'in'       => ':attribute tidak valid.',
@@ -80,11 +83,13 @@ class TransaksiController extends Controller
             'metode'       => 'Metode pembayaran',
             'jumlah_bayar' => 'Jumlah dibayar',
             'total'        => 'Total pesanan',
+            'denda'        => 'Denda',
+            'catatan_denda' => 'Alasan denda',
         ]);
 
         $pesanan = $pembayaran->pesanan;
 
-        // Total rental tetap (harga x jumlah). Total pesanan jahit custom ditetapkan admin di sini.
+        // Total sewa tetap (harga x jumlah). Total pesanan jahit custom ditetapkan admin di sini.
         $total = $pesanan->isRental() ? (int) $pesanan->total : (int) ($data['total'] ?? $pesanan->total);
 
         if (in_array($data['status_bayar'], ['dicicil', 'lunas'], true) && $total < 1) {
@@ -110,6 +115,13 @@ class TransaksiController extends Controller
         DB::transaction(function () use ($pembayaran, $pesanan, $data, $total, $jumlah, $sudahAdaUangMasuk) {
             if (! $pesanan->isRental() && $total !== (int) $pesanan->total) {
                 $pesanan->update(['total' => $total]);
+            }
+
+            if ($pesanan->isRental() && isset($data['denda'])) {
+                $pesanan->penyewaan?->update([
+                    'denda'         => (int) $data['denda'],
+                    'catatan_denda' => $data['denda'] > 0 ? ($data['catatan_denda'] ?? null) : null,
+                ]);
             }
 
             $pembayaran->update([

@@ -81,7 +81,7 @@ class DataDashboard
     {
         [$stLabel, $stKelas, $stKey] = self::status(self::pick($p, ['status_pesanan', 'status']));
         $jenis = (string) self::pick($p, ['jenis_pesanan', 'jenis', 'tipe'], '');
-        $jenisLabel = Str::contains(Str::lower($jenis), ['rental', 'sewa']) ? 'Rental'
+        $jenisLabel = Str::contains(Str::lower($jenis), ['rental', 'sewa']) ? 'Sewa'
             : (Str::contains(Str::lower($jenis), ['jahit', 'custom', 'pesan']) ? 'Jahit custom' : ($jenis ?: '-'));
         $tgl = self::pick($p, ['tanggal_pesanan', 'tanggal', 'created_at']);
 

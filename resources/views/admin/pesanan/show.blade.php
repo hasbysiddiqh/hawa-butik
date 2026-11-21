@@ -33,6 +33,9 @@
                     @if ($pesanan->penyewaan)
                         <dt class="col-sm-4">Tanggal selesai sewa</dt><dd class="col-sm-8">{{ $pesanan->penyewaan->tgl_selesai?->format('d M Y') ?? '-' }}</dd>
                         <dt class="col-sm-4">Denda</dt><dd class="col-sm-8">Rp {{ number_format((int) $pesanan->penyewaan->denda, 0, ',', '.') }}</dd>
+                        @if ((int) $pesanan->penyewaan->denda > 0 && $pesanan->penyewaan->catatan_denda)
+                            <dt class="col-sm-4">Alasan denda</dt><dd class="col-sm-8">{!! nl2br(e($pesanan->penyewaan->catatan_denda)) !!}</dd>
+                        @endif
                     @endif
                 @else
                     <dt class="col-sm-4">Model lengan</dt><dd class="col-sm-8">{{ $pesanan->model_lengan ?? '-' }}</dd>
@@ -48,6 +51,7 @@
                     <dt class="col-sm-4">Metode pembayaran</dt><dd class="col-sm-8">{{ $pesanan->pembayaran->labelMetode() }}</dd>
                 @endif
                 <dt class="col-sm-4">Catatan</dt><dd class="col-sm-8">{!! nl2br(e($pesanan->detail_pesanan ?: '-')) !!}</dd>
+                <dt class="col-sm-4">Lampiran</dt><dd class="col-sm-8">@if ($pesanan->urlLampiran())<a href="{{ $pesanan->urlLampiran() }}" target="_blank" rel="noopener">Lihat lampiran</a>@else - @endif</dd>
             </dl>
         </div>
 
@@ -70,7 +74,7 @@
                     <button type="submit" class="submit-btn primary-btn btn-kecil">SIMPAN STATUS</button>
                 </form>
                 @if ($pesanan->isRental())
-                    <small class="text-muted d-block mt-3">Status rental sama dengan status sewa. Memilih "Dikembalikan" mengisi tanggal selesai sewa hari ini.</small>
+                    <small class="text-muted d-block mt-3">Status pesanan sewa juga menjadi status penyewaan. Memilih "Dikembalikan" mengisi tanggal selesai sewa hari ini.</small>
                 @else
                     <small class="text-muted d-block mt-3">Setelah "Dikerjakan", pelanggan tidak bisa lagi mengubah atau membatalkan pesanan ini.</small>
                 @endif

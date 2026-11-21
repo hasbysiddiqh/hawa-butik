@@ -20,7 +20,7 @@
             @forelse ($pesanans as $pesanan)
                 <tr>
                     <td>{{ $pesanan->id }}</td>
-                    <td>{{ $pesanan->jenis_pakaian ?? '-' }}<br><small class="text-muted">{{ $pesanan->isRental() ? 'Rental: '.$pesanan->produk?->nama_produk : $pesanan->model_lengan }}</small></td>
+                    <td>{{ $pesanan->jenis_pakaian ?? '-' }}<br><small class="text-muted">{{ $pesanan->isRental() ? 'Sewa: '.$pesanan->produk?->nama_produk : $pesanan->model_lengan }}</small></td>
                     <td>{{ $pesanan->ukuran ?? '-' }}</td>
                     <td>{{ $pesanan->jumlah }}</td>
                     <td>@include('partials.status-pesanan')</td>

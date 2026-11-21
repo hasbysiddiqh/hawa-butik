@@ -106,14 +106,14 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 about-left reveal">
-                    <div class="about-frame"><img class="img-fluid" src="{{ asset('img/about-img.jpg') }}" alt="Hawa Butik"><span class="about-badge"><span class="lnr lnr-diamond"></span>Rental &amp; Jahit Custom</span></div>
+                    <div class="about-frame"><img class="img-fluid" src="{{ asset('img/about-img.jpg') }}" alt="Hawa Butik"><span class="about-badge"><span class="lnr lnr-diamond"></span>Sewa &amp; Jahit Custom</span></div>
                 </div>
                 <div class="col-lg-6 about-right reveal" style="--d:.12s">
                     <span class="eyebrow">Tentang Kami</span>
                     <h2>We Believe that Every Woman Deserves to Look Elegant</h2>
                     <p>Hawa Butik hadir untuk menyediakan pilihan busana elegan yang dapat disewa untuk berbagai momen spesial. Dari acara formal hingga pesta dan perayaan, kami membantu Anda tampil anggun, percaya diri, dan memukau dengan busana yang tepat.</p>
                     <ul class="tag-list">
-                        <li>Busana Elegan</li><li>Rental &amp; Jahit Custom</li><li>Untuk Setiap Momen</li>
+                        <li>Busana Elegan</li><li>Sewa &amp; Jahit Custom</li><li>Untuk Setiap Momen</li>
                     </ul>
                 </div>
             </div>
@@ -131,7 +131,7 @@
             <div class="bento">
                 <div class="bento-card bento-besar reveal">
                     <span class="ikon lnr lnr-tag"></span>
-                    <h4>Rental Busana</h4>
+                    <h4>Sewa Busana</h4>
                     <p>Sewa busana pilihan dari Collection Hawa Butik untuk acara spesialmu, tanpa harus membeli.</p>
                 </div>
                 <div class="bento-card bento-lebar reveal" style="--d:.08s">
@@ -208,7 +208,7 @@
             <ol class="langkah">
                 <li class="reveal"><span class="nomor">01</span><span class="ikon lnr lnr-eye"></span><h5>Pilih Busana</h5><p>Lihat Collection dan temukan busana yang cocok untuk acaramu.</p></li>
                 <li class="reveal" style="--d:.08s"><span class="nomor">02</span><span class="ikon lnr lnr-user"></span><h5>Masuk atau Daftar</h5><p>Buat akun gratis agar pesananmu tersimpan rapi.</p></li>
-                <li class="reveal" style="--d:.16s"><span class="nomor">03</span><span class="ikon lnr lnr-pencil"></span><h5>Isi Pemesanan</h5><p>Pilih Rental atau Pesan jahit, lalu lengkapi formulirnya.</p></li>
+                <li class="reveal" style="--d:.16s"><span class="nomor">03</span><span class="ikon lnr lnr-pencil"></span><h5>Isi Pemesanan</h5><p>Pilih Sewa atau Pesan jahit, lalu lengkapi formulirnya.</p></li>
                 <li class="reveal" style="--d:.24s"><span class="nomor">04</span><span class="ikon lnr lnr-checkmark-circle"></span><h5>Pantau Pesanan</h5><p>Cek status pesananmu kapan saja di halaman Pesanan Saya.</p></li>
             </ol>
         </div>

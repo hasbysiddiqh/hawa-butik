@@ -141,7 +141,7 @@
 .dash-main .pesanan-detail dt:first-of-type, .dash-main .pesanan-detail dt:first-of-type + dd { border-top: 0; }
 @media (max-width: 575px) { .dash-main .pesanan-detail dd { padding-top: 0; border-top: 0; } }
 
-/* Pilihan Rental / Pesan */
+/* Pilihan Sewa / Pesan */
 .dash-main .pilihan-card { padding: 34px 26px; border: 1px solid var(--line); border-radius: var(--r-md); background: #fff; box-shadow: var(--shadow-sm); text-align: center; color: var(--text); }
 .dash-main .pilihan-card .lnr { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto; border-radius: 20px; background: var(--pale); color: var(--sage-deep); font-size: 28px;
     transition: transform .3s var(--ease), background .3s var(--ease), color .3s var(--ease); }

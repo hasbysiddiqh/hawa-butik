@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Pelanggan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pembayaran;
 use App\Models\Pesanan;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class PesananController extends Controller
@@ -38,13 +41,20 @@ class PesananController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $data = $this->normalisasi($request->validate($this->aturan(), $this->pesan()));
+        $data = $this->normalisasi($request->validate($this->aturan(), $this->pesan(), $this->atribut()));
+        $metode = $data['metode'] ?? null;
+        unset($data['metode'], $data['lampiran']);
 
         // Total pesanan jahit baru ditetapkan admin setelah estimasi, jadi transaksi dimulai dari nol.
-        $pesanan = DB::transaction(function () use ($request, $data) {
-            $pesanan = $request->user('pelanggan')->pesanans()->create([...$data, 'status' => 'baru']);
+        $pesanan = DB::transaction(function () use ($request, $data, $metode) {
+            $pesanan = $request->user('pelanggan')->pesanans()->create([
+                ...$data,
+                'status'   => 'baru',
+                'lampiran' => $request->file('lampiran')?->store('', 'lampiran'),
+            ]);
 
             $pesanan->pembayaran()->create([
+                'metode'       => $metode,
                 'jumlah_bayar' => 0,
                 'status_bayar' => 'menunggu',
             ]);
@@ -91,7 +101,21 @@ class PesananController extends Controller
             return $this->tolakKarenaSudahDikerjakan($pesanan);
         }
 
-        $pesanan->update($this->normalisasi($request->validate($this->aturan(), $this->pesan())));
+        $data = $this->normalisasi($request->validate($this->aturan(), $this->pesan(), $this->atribut()));
+        $metode = $data['metode'] ?? null;
+        unset($data['metode'], $data['lampiran']);
+
+        if ($request->hasFile('lampiran')) {
+            if ($pesanan->lampiran) {
+                Storage::disk('lampiran')->delete($pesanan->lampiran);
+            }
+            $data['lampiran'] = $request->file('lampiran')->store('', 'lampiran');
+        }
+
+        DB::transaction(function () use ($pesanan, $data, $metode) {
+            $pesanan->update($data);
+            $pesanan->pembayaran?->update(['metode' => $metode]);
+        });
 
         return redirect()
             ->route('pelanggan.pesanan.show', $pesanan)
@@ -128,7 +152,7 @@ class PesananController extends Controller
     {
         return redirect()
             ->route('pelanggan.pesanan.show', $pesanan)
-            ->with('error', 'Pesanan rental tidak dapat diubah atau dibatalkan sendiri. Hubungi admin jika ada yang perlu diperbaiki.');
+            ->with('error', 'Pesanan sewa tidak dapat diubah atau dibatalkan sendiri. Hubungi admin jika ada yang perlu diperbaiki.');
     }
 
     private function tolakKarenaSudahDikerjakan(Pesanan $pesanan): RedirectResponse
@@ -161,6 +185,8 @@ class PesananController extends Controller
             'warna'               => ['required', 'string', 'max:50'],
             'jumlah'              => ['required', 'integer', 'min:1', 'max:1000'],
             'detail_pesanan'      => ['nullable', 'string', 'max:2000'],
+            'lampiran'            => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:2048'],
+            'metode'              => ['nullable', Rule::in(array_keys(Pembayaran::LABEL_METODE))],
         ];
     }
 
@@ -171,6 +197,12 @@ class PesananController extends Controller
             'required_if' => ':attribute wajib diisi jika memilih "Lainnya".',
             'regex'       => 'Nomor WhatsApp tidak valid.',
         ];
+    }
+
+    /** @return array<string, string> */
+    private function atribut(): array
+    {
+        return ['lampiran' => 'Lampiran', 'metode' => 'Metode pembayaran'];
     }
 
     /** Jika memilih "Lainnya", pakai teks yang diketik sendiri. */

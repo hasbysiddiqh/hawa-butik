@@ -34,6 +34,7 @@ class Pesanan extends Model
         'warna',
         'jumlah',
         'detail_pesanan',
+        'lampiran',
         'status',
         'total',
         'stok_dipotong',
@@ -63,7 +64,7 @@ class Pesanan extends Model
         'dibatalkan'   => 'Dibatalkan',
     ];
 
-    /** Status "Rental". Nilainya juga disalin ke penyewaans.status_sewa. */
+    /** Status "Sewa". Nilainya juga disalin ke penyewaans.status_sewa. */
     public const LABEL_STATUS_RENTAL = [
         'dipinjam'           => 'Dipinjam',
         'belum_dikembalikan' => 'Belum dikembalikan',
@@ -88,7 +89,7 @@ class Pesanan extends Model
         'dibatalkan'   => [],
     ];
 
-    /** Perpindahan status Rental yang diperbolehkan untuk admin. Dikembalikan bersifat final. */
+    /** Perpindahan status Sewa yang diperbolehkan untuk admin. Dikembalikan bersifat final. */
     public const TRANSISI_RENTAL = [
         'dipinjam'           => ['belum_dikembalikan', 'dikembalikan'],
         'belum_dikembalikan' => ['dikembalikan'],
@@ -141,7 +142,7 @@ class Pesanan extends Model
         return $this->belongsTo(Admin::class, 'id_admin_verifikasi', 'id_admin');
     }
 
-    /** Pesanan Rental (sewa busana dari Collection). */
+    /** Pesanan Sewa (sewa busana dari Collection). */
     public function scopeRental(Builder $query): void
     {
         $query->where('tipe', 'rental');
@@ -160,7 +161,13 @@ class Pesanan extends Model
 
     public function labelTipe(): string
     {
-        return $this->isRental() ? 'Rental' : 'Pesan (jahit custom)';
+        return $this->isRental() ? 'Sewa' : 'Pesan (jahit custom)';
+    }
+
+    /** URL lampiran catatan (gambar/PDF), atau null jika pelanggan tidak mengunggah. */
+    public function urlLampiran(): ?string
+    {
+        return $this->lampiran ? asset('uploads/lampiran/'.$this->lampiran) : null;
     }
 
     /** Hanya pesanan Pesan (Kustom) yang bisa diubah isinya; rental tidak bisa diubah pelanggan. */

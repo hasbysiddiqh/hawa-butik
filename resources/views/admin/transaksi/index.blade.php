@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-end flex-wrap mb-20">
         <div>
             <h1>Kelola Transaksi</h1>
-            <p class="lead-text mb-0">Pantau pembayaran rental dan pesanan jahit custom.</p>
+            <p class="lead-text mb-0">Pantau pembayaran sewa dan pesanan jahit custom.</p>
         </div>
     </div>
 
@@ -68,7 +68,7 @@
                     <td>#{{ $transaksi->id_bayar }}</td>
                     <td>
                         {{ $pesanan->pelanggan?->nama_pelanggan ?? $pesanan->nama }}
-                        <small class="d-block text-muted">Pesanan #{{ $pesanan->id }} &middot; {{ $pesanan->isRental() ? 'Rental' : 'Jahit custom' }}</small>
+                        <small class="d-block text-muted">Pesanan #{{ $pesanan->id }} &middot; {{ $pesanan->isRental() ? 'Sewa' : 'Jahit custom' }}</small>
                     </td>
                     <td class="uang">
                         @if ($transaksi->totalTagihan() > 0)

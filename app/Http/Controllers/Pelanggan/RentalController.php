@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pelanggan;
 
 use App\Http\Controllers\Controller;
+use App\Models\Pembayaran;
 use App\Models\Pesanan;
 use App\Models\Produk;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +15,7 @@ use Illuminate\View\View;
 
 class RentalController extends Controller
 {
-    /** Form rental: pilih busana dari Collection, isi tanggal sewa dan kembali. */
+    /** Form sewa: pilih busana dari Collection, isi tanggal sewa dan kembali. */
     public function create(Request $request): View
     {
         $pelanggan = $request->user('pelanggan');
@@ -48,6 +49,8 @@ class RentalController extends Controller
             'tanggal_sewa'      => ['required', 'date', 'after_or_equal:today'],
             'tanggal_kembali'   => ['required', 'date', 'after_or_equal:tanggal_sewa'],
             'detail_pesanan'    => ['nullable', 'string', 'max:2000'],
+            'lampiran'          => ['nullable', 'file', 'mimes:jpg,jpeg,png,webp,pdf', 'max:2048'],
+            'metode'            => ['nullable', Rule::in(array_keys(Pembayaran::LABEL_METODE))],
         ], [
             'required'                    => ':attribute wajib diisi.',
             'regex'                       => 'Nomor WhatsApp tidak valid.',
@@ -58,13 +61,18 @@ class RentalController extends Controller
             'nama'            => 'Nama',
             'whatsapp'        => 'Nomor WhatsApp',
             'jumlah'          => 'Jumlah',
+            'lampiran'        => 'Lampiran',
+            'metode'          => 'Metode pembayaran',
             'tanggal_sewa'    => 'Tanggal sewa',
             'tanggal_kembali' => 'Tanggal kembali',
         ]);
 
         // Cek stok, kurangi stok, lalu simpan pesanan, penyewaan, detail transaksi, dan pembayaran
         // dalam satu transaksi database. Baris produk dikunci agar dua pelanggan tidak menyewa stok yang sama.
-        $pesanan = DB::transaction(function () use ($request, $data) {
+        $metode = $data['metode'] ?? null;
+        unset($data['metode'], $data['lampiran']);
+
+        $pesanan = DB::transaction(function () use ($request, $data, $metode) {
             $produk = Produk::with('kategori')->lockForUpdate()->findOrFail($data['id_produk']);
 
             if ($produk->stok < $data['jumlah']) {
@@ -86,6 +94,7 @@ class RentalController extends Controller
                 'status'        => 'dipinjam',
                 'total'         => $subtotal,
                 'stok_dipotong' => true,
+                'lampiran'      => $request->file('lampiran')?->store('', 'lampiran'),
             ]);
 
             $pesanan->penyewaan()->create([
@@ -103,6 +112,7 @@ class RentalController extends Controller
             ]);
 
             $pesanan->pembayaran()->create([
+                'metode'       => $metode,
                 'jumlah_bayar' => 0,
                 'status_bayar' => 'menunggu',
             ]);
@@ -112,6 +122,6 @@ class RentalController extends Controller
 
         return redirect()
             ->route('pelanggan.pesanan.show', $pesanan)
-            ->with('success', 'Rental berhasil dikirim. Kami akan menghubungi Anda lewat WhatsApp.');
+            ->with('success', 'Sewa berhasil dikirim. Kami akan menghubungi Anda lewat WhatsApp.');
     }
 }

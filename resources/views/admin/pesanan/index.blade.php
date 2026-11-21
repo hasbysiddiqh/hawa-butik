@@ -4,7 +4,7 @@
 
 @section('isi')
     <h1>Kelola Pesanan</h1>
-    <p class="lead-text">{{ $rentals->total() }} rental dan {{ $kustoms->total() }} pesanan kustom ditemukan.</p>
+    <p class="lead-text">{{ $rentals->total() }} sewa dan {{ $kustoms->total() }} pesanan kustom ditemukan.</p>
 
     <form class="form-inline mb-20" method="GET" action="{{ route('admin.pesanan.index') }}">
         @if ($statusRental !== '')
@@ -18,8 +18,8 @@
         <button type="submit" class="submit-btn primary-btn btn-kecil mb-2">CARI</button>
     </form>
 
-    {{-- Tabel Rental --}}
-    <h2 class="kelompok-judul">Rental<small>{{ $rentals->total() }}</small></h2>
+    {{-- Tabel Sewa --}}
+    <h2 class="kelompok-judul">Sewa<small>{{ $rentals->total() }}</small></h2>
 
     <div class="mb-20">
         <a href="{{ route('admin.pesanan.index', array_filter(['cari' => $cari, 'status_kustom' => $statusKustom])) }}" class="chip {{ $statusRental === '' ? 'aktif' : '' }}">Semua</a>
@@ -46,7 +46,7 @@
                     <td><a href="{{ route('admin.pesanan.show', $pesanan) }}" class="primary-btn btn-kecil">KELOLA</a></td>
                 </tr>
             @empty
-                <tr><td colspan="8" class="text-center text-muted py-4">Tidak ada pesanan rental.</td></tr>
+                <tr><td colspan="8" class="text-center text-muted py-4">Tidak ada pesanan sewa.</td></tr>
             @endforelse
             </tbody>
         </table>

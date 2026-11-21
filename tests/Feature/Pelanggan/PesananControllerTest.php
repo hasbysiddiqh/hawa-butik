@@ -26,6 +26,7 @@ class PesananControllerTest extends TestCase
             'warna' => 'Cokelat susu',
             'jumlah' => 2,
             'detail_pesanan' => 'Untuk wisuda',
+            'metode' => 'tunai',
         ], $timpa);
     }
 

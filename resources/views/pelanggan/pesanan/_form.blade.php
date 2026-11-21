@@ -11,7 +11,7 @@
 
 @include('partials.validation-errors')
 
-<form class="pesanan-form pesanan-card" action="{{ $action }}" method="POST">
+<form class="pesanan-form pesanan-card" action="{{ $action }}" method="POST" enctype="multipart/form-data">
     @csrf
     @if ($metode !== 'POST')
         @method($metode)
@@ -80,6 +80,8 @@
     <label for="detail_pesanan">Catatan tambahan (opsional)</label>
     <textarea id="detail_pesanan" name="detail_pesanan" class="form-control"
               placeholder="Mis. ukuran badan, referensi model, tanggal dibutuhkan">{{ old('detail_pesanan', $pesanan->detail_pesanan ?? '') }}</textarea>
+
+    @include('partials.lampiran-metode', ['lampiranUrl' => $pesanan->urlLampiran(), 'metodeAwal' => $pesanan->pembayaran?->metode])
 
     <div class="form-aksi">
         <a href="{{ $batal ?? route('pelanggan.pemesanan') }}" class="form-batal">Batal</a>

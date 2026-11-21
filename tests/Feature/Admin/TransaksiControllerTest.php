@@ -152,6 +152,31 @@ class TransaksiControllerTest extends TestCase
         $this->assertSame(300000, (int) $transaksi->pesanan->fresh()->total);
     }
 
+    public function test_denda_is_saved_for_rental_and_jumlah_bayar_is_zero_unless_dicicil(): void
+    {
+        $transaksi = $this->transaksiRental(300000);
+        $transaksi->pesanan->penyewaan()->create([
+            'tgl_mulai' => now()->toDateString(),
+            'tgl_kembali' => now()->addDays(2)->toDateString(),
+            'status_sewa' => 'dipinjam',
+            'denda' => 0,
+        ]);
+        $admin = $this->admin();
+
+        $this->actingAs($admin, 'admin')
+            ->patch(route('admin.transaksi.update', $transaksi), ['status_bayar' => 'belum_dibayar', 'jumlah_bayar' => 99999, 'denda' => 25000, 'catatan_denda' => 'Terlambat 2 hari'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame(0, (int) $transaksi->fresh()->jumlah_bayar);
+        $this->assertSame(25000, (int) $transaksi->pesanan->penyewaan->fresh()->denda);
+        $this->assertSame('Terlambat 2 hari', $transaksi->pesanan->penyewaan->fresh()->catatan_denda);
+
+        $this->actingAs($admin, 'admin')
+            ->get(route('admin.transaksi.show', $transaksi))
+            ->assertOk()
+            ->assertSee('Denda (Rp)');
+    }
+
     public function test_menunggu_resets_payment(): void
     {
         $transaksi = $this->transaksiRental(300000);
